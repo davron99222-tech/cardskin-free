@@ -1,10 +1,17 @@
 'use strict';
 
 const MAX_ARTWORK_BYTES = 12 * 1024 * 1024;
-const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+
+function artworkMimeType(file) {
+  const mime = String(file && file.type || '').toLowerCase();
+  if (SUPPORTED_IMAGE_TYPES.includes(mime)) return mime;
+  const extension = String(file && file.name || '').toLowerCase().split('.').pop();
+  return ({ jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic', heif: 'image/heif' })[extension] || mime;
+}
 
 function validateArtworkFile(file) {
-  if (!file || !SUPPORTED_IMAGE_TYPES.includes(file.type)) return 'Choose a JPG, PNG or WEBP image';
+  if (!file || !SUPPORTED_IMAGE_TYPES.includes(artworkMimeType(file))) return 'Choose a JPG, PNG, WEBP or iPhone HEIC photo';
   if (file.size > MAX_ARTWORK_BYTES) return 'Image must be smaller than 12 MB';
   return null;
 }
@@ -49,5 +56,5 @@ async function loadArtwork() {
   } finally { db.close(); }
 }
 
-if (typeof module !== 'undefined') module.exports = { validateArtworkFile, artworkName };
-if (typeof window !== 'undefined') window.CardPersistence = { validateArtworkFile, artworkName, saveArtwork, loadArtwork };
+if (typeof module !== 'undefined') module.exports = { validateArtworkFile, artworkName, artworkMimeType };
+if (typeof window !== 'undefined') window.CardPersistence = { validateArtworkFile, artworkName, artworkMimeType, saveArtwork, loadArtwork };
