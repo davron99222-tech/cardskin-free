@@ -1,0 +1,10 @@
+{
+  "name": "Card Studio",
+  "short_name": "Card Studio",
+  "description": "A free creative studio for custom digital card artwork.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0c0f",
+  "theme_color": "#0b0c0f",
+  "icons": [{"src":"icons/apple-touch-icon.png","sizes":"180x180","type":"image/png","purpose":"any"}]
+}

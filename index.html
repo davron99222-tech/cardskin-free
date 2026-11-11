@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0c0f" />
+  <meta name="description" content="A free creative studio for custom digital card artwork." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Card Studio — Make it yours</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Card Studio home"><span class="brand-mark">C</span><span>CARD<span class="brand-light">STUDIO</span></span></a>
+      <nav class="desktop-nav" aria-label="Main navigation"><a class="active" href="#explore">Explore</a><a href="#collection">My collection</a><a href="#about">About</a></nav>
+      <button class="avatar" id="profileButton" aria-label="Profile">D</button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR CARD. YOUR CANVAS.</div>
+          <h1 id="hero-title">A little more<br /><em>you.</em></h1>
+          <p>Discover art for your everyday carry. Pick a look, make it yours, keep your collection close.</p>
+          <div class="hero-actions"><a class="button button-primary" href="#explore">Explore designs <span>↗</span></a><button class="button button-quiet" id="openEditorTop">Create your own <span>＋</span></button></div>
+          <div class="hero-note"><span class="tiny-check">✓</span> Free to explore · No card details needed</div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-glow"></div>
+          <div class="card-stage">
+            <div class="bank-card art-ronin" id="heroCard" aria-label="Selected card artwork preview">
+              <div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">01 / 06</span></div>
+              <div class="art-title" id="heroArtTitle">NEON<br />RONIN</div>
+              <div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+              <div class="card-bottom"><span id="heroArtCategory">ANIME SERIES</span><span class="card-orbit">✳</span></div>
+            </div>
+            <div class="stage-caption"><span class="live-dot"></span> LIVE PREVIEW <span class="caption-divider">/</span> <span id="heroCaption">NEON RONIN</span></div>
+          </div>
+          <div class="floating-label label-one">01 <span>ARTWORK</span></div><div class="floating-label label-two">100% <span>YOURS</span></div>
+        </div>
+      </section>
+
+      <section class="explore-section" id="explore">
+        <div class="section-heading"><div><div class="eyebrow">THE LIBRARY</div><h2>Find your <em>signature.</em></h2></div><div class="result-count" id="resultCount">06 DESIGNS</div></div>
+        <div class="toolbar">
+          <label class="search-box"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Search styles, moods, colours..." autocomplete="off" /><kbd>⌘ K</kbd></label>
+          <div class="filter-row" id="categoryFilters" aria-label="Filter designs">
+            <button class="filter-chip selected" data-category="All">All designs</button>
+            <button class="filter-chip" data-category="Anime">Anime</button>
+            <button class="filter-chip" data-category="Luxury">Luxury</button>
+            <button class="filter-chip" data-category="Cyberpunk">Cyberpunk</button>
+            <button class="filter-chip" data-category="Art">Art</button>
+            <button class="filter-chip" data-category="Cinema">Cinema</button>
+            <button class="filter-chip" data-category="Automotive">Automotive</button>
+          </div>
+        </div>
+        <div class="design-grid" id="designGrid" aria-live="polite"></div>
+        <div class="empty-state hidden" id="emptyState"><div class="empty-icon">⌕</div><h3>No designs found</h3><p>Try another search or category.</p><button class="button button-quiet" id="clearFilters">Clear filters</button></div>
+      </section>
+
+      <section class="collection-section" id="collection">
+        <div class="collection-copy"><div class="eyebrow">YOUR SPACE</div><h2>Keep the ones<br />that feel like <em>you.</em></h2><p>Your saved designs live here. Build a collection that changes with your mood.</p></div>
+        <div class="collection-panel"><div class="collection-panel-head"><span>YOUR SAVED DESIGNS</span><span id="favoriteCount">00 SAVED</span></div><div class="saved-list" id="savedList"><div class="saved-empty">Tap the heart on any design to save it here.</div></div></div>
+      </section>
+    </main>
+
+    <footer id="about"><a class="brand footer-brand" href="#top"><span class="brand-mark">C</span><span>CARD<span class="brand-light">STUDIO</span></span></a><span>Made for self-expression.</span><span class="footer-disclaimer">Artwork preview only · Not a payment card</span></footer>
+  </div>
+
+  <div class="modal-backdrop hidden" id="editorModal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <div class="editor-modal">
+      <div class="modal-head"><div><div class="eyebrow">MAKE IT YOURS</div><h2 id="editorTitle">Your canvas.</h2></div><button class="icon-button" id="closeEditor" aria-label="Close editor">×</button></div>
+      <div class="editor-layout">
+        <div class="editor-preview-wrap"><div class="bank-card editor-card art-ronin" id="editorCard"><div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">CUSTOM</span></div><div class="art-title" id="editorArtTitle">NEON<br />RONIN</div><div class="card-chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span>CUSTOM ARTWORK</span><span class="card-orbit">✳</span></div></div><p class="preview-hint">The chip stays consistent across every design.</p></div>
+        <div class="editor-controls">
+          <label class="upload-zone" for="imageUpload"><span class="upload-symbol">＋</span><strong>Upload your image</strong><small>JPG, PNG or WEBP · stays on this device</small><input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+          <div class="control-group"><div class="control-label"><label for="zoomRange">Image scale</label><output id="zoomValue">100%</output></div><input id="zoomRange" type="range" min="80" max="160" value="100" /></div>
+          <div class="control-group"><div class="control-label"><label for="brightnessRange">Brightness</label><output id="brightnessValue">100%</output></div><input id="brightnessRange" type="range" min="60" max="140" value="100" /></div>
+          <div class="control-group"><div class="control-label"><label for="positionRange">Vertical position</label><output id="positionValue">50%</output></div><input id="positionRange" type="range" min="0" max="100" value="50" /></div>
+          <div class="editor-actions"><button class="button button-quiet" id="resetEditor">Reset</button><button class="button button-quiet" id="exportPng">Export PNG</button><button class="button button-primary" id="saveCustom">Save artwork <span>↗</span></button></div><button class="wallet-pending" type="button" disabled>Apple Wallet apply · iPhone validation pending</button>
+          <p class="local-note"><span>⌑</span> Your uploaded image is processed locally in this prototype.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="src/catalog.js"></script>
+  <script src="src/persistence.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
