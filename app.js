@@ -16,6 +16,7 @@ const $ = (id) => document.getElementById(id);
 const grid = $('designGrid');
 const heroCard = $('heroCard');
 const editorCard = $('editorCard');
+const walletCard = $('walletCard');
 
 function getSelected() { return designs.find((item) => item.id === state.selectedId) || designs[0]; }
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
@@ -27,15 +28,15 @@ function cardMarkup(design, role = 'gallery') {
   return `${imageMarkup}<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title" ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span ${subtitleId ? `id="${subtitleId}"` : ''}>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
 }
 function setCardAppearance(element, design, role = 'gallery') {
-  const roleClass = element === editorCard ? 'editor-card' : '';
+  const roleClass = element === editorCard ? 'editor-card' : element === walletCard ? 'wallet-card' : '';
   element.className = `bank-card ${design.art || ''} ${roleClass}`.trim();
   element.innerHTML = cardMarkup(design, role);
-  if (element === editorCard || element === heroCard) {
+  if (element === editorCard || element === heroCard || element === walletCard) {
     const stickers = state.quizStickers.map((sticker, index) => `<span class="quiz-sticker sticker-${index + 1}">${escapeHtml(sticker)}</span>`).join('');
     const finish = state.quizFinish && state.quizFinish !== 'gloss' ? `<div class="card-finish-overlay finish-${state.quizFinish}"></div>` : '';
     if (stickers || finish) element.insertAdjacentHTML('beforeend', `<div class="quiz-stickers">${stickers}</div>${finish}`);
   }
-  if (state.customImage && (element === editorCard || element === heroCard)) {
+  if (state.customImage && (element === editorCard || element === heroCard || element === walletCard)) {
     const artwork = document.createElement('img');
     artwork.className = 'custom-art-image';
     artwork.alt = state.customName || 'Uploaded artwork';
@@ -114,6 +115,15 @@ function openEditor() {
   $('editorArtTitle').innerHTML = escapeHtml(state.customImage ? state.customName : design.title).toUpperCase().replace(' ', '<br>');
 }
 function closeEditor() { $('editorModal').classList.add('hidden'); document.body.style.overflow = ''; }
+function openWalletPreview() {
+  const design = state.customImage ? { title:state.customName, art:'', subtitle:'CUSTOM ARTWORK', edition:'CUSTOM' } : getSelected();
+  const preview = window.CardWallet.createWalletPreviewState({ title:design.title });
+  setCardAppearance(walletCard, design, 'wallet');
+  $('walletPreviewName').textContent = preview.title;
+  $('walletModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeWalletPreview() { $('walletModal').classList.add('hidden'); document.body.style.overflow = 'hidden'; }
 
 let quizState = null;
 const quizStickers = ['✨', '🌸', '🔥', '💎', '🦋', '⭐', '🍀', '🎀', '😎', '💖'];
@@ -164,6 +174,11 @@ $('clearFilters').addEventListener('click', () => { state.category='All'; state.
 $('openEditorTop').addEventListener('click', openEditor);
 $('closeEditor').addEventListener('click', closeEditor);
 $('editorModal').addEventListener('click', (event) => { if (event.target === $('editorModal')) closeEditor(); });
+$('openWalletPreview').addEventListener('click', openWalletPreview);
+$('closeWalletPreview').addEventListener('click', closeWalletPreview);
+$('walletBackToEditor').addEventListener('click', closeWalletPreview);
+$('walletModal').addEventListener('click', (event) => { if (event.target === $('walletModal')) closeWalletPreview(); });
+editorCard.addEventListener('dblclick', openWalletPreview);
 function handleArtworkFile(file, input) {
   if (!file) return;
   const validationError = window.CardPersistence.validateArtworkFile(file);
@@ -221,7 +236,7 @@ $('saveCustom').addEventListener('click', async () => {
   }
 });
 $('profileButton').addEventListener('click', () => showToast('Personal accounts are coming in a later build'));
-document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase()==='k') { event.preventDefault(); $('searchInput').focus(); } if (event.key==='Escape') closeEditor(); });
+document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase()==='k') { event.preventDefault(); $('searchInput').focus(); } if (event.key==='Escape') { if (!$('walletModal').classList.contains('hidden')) closeWalletPreview(); else closeEditor(); } });
 
 async function initializeApp() {
   try {

@@ -7,7 +7,7 @@
   <meta name="description" content="A free creative studio for custom digital card artwork." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
   <title>Card Studio — Make it yours</title>
 </head>
 <body>
@@ -87,17 +87,30 @@
           <div class="control-group"><div class="control-label"><label for="zoomRange">Image scale</label><output id="zoomValue">100%</output></div><input id="zoomRange" type="range" min="80" max="160" value="100" /></div>
           <div class="control-group"><div class="control-label"><label for="brightnessRange">Brightness</label><output id="brightnessValue">100%</output></div><input id="brightnessRange" type="range" min="60" max="140" value="100" /></div>
           <div class="control-group"><div class="control-label"><label for="positionRange">Vertical position</label><output id="positionValue">50%</output></div><input id="positionRange" type="range" min="0" max="100" value="50" /></div>
-          <div class="editor-actions"><button class="button button-quiet" id="resetEditor">Reset</button><button class="button button-quiet" id="exportPng">Export PNG</button><button class="button button-primary" id="saveCustom">Save artwork <span>↗</span></button></div><button class="wallet-pending" type="button" disabled>Apple Wallet apply · iPhone validation pending</button>
+          <div class="editor-actions"><button class="button button-quiet" id="resetEditor">Reset</button><button class="button button-quiet" id="exportPng">Export PNG</button><button class="button button-primary" id="saveCustom">Save artwork <span>↗</span></button></div><button class="wallet-preview-button" type="button" id="openWalletPreview">Preview in Apple Wallet <span>↗</span></button>
           <p class="local-note"><span>⌑</span> Your uploaded image is processed locally in this prototype.</p>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="modal-backdrop hidden" id="walletModal" role="dialog" aria-modal="true" aria-labelledby="walletTitle">
+    <div class="wallet-modal">
+      <div class="modal-head"><div><div class="eyebrow">WALLET PREVIEW</div><h2 id="walletTitle">Your card, <em>in view.</em></h2></div><button class="icon-button" id="closeWalletPreview" aria-label="Close Wallet preview">×</button></div>
+      <div class="wallet-phone" aria-label="Visual Apple Wallet preview">
+        <div class="wallet-status"><span>9:41</span><span>▴ ᯤ ▰</span></div>
+        <div class="wallet-stack"><div class="wallet-card-wrap"><div class="bank-card wallet-card art-ronin" id="walletCard"></div></div></div>
+        <div class="wallet-caption"><strong id="walletPreviewName">Card Studio</strong><span>Artwork preview only · no payment data</span></div>
+      </div>
+      <p class="wallet-disclaimer">This screen changes the visual design only. It does not add, modify, or charge a bank card.</p>
+      <button class="button button-quiet wallet-close-action" id="walletBackToEditor">Back to editor</button>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="catalog.js?v=6"></script>
   <script src="persistence.js?v=6"></script>
   <script src="quiz.js?v=1"></script>
-  <script src="app.js?v=8"></script>
+  <script src="wallet.js?v=1"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>
