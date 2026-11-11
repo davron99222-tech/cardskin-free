@@ -7,7 +7,7 @@
   <meta name="description" content="A free creative studio for custom digital card artwork." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=8" />
   <title>Card Studio — Make it yours</title>
 </head>
 <body>
@@ -24,7 +24,7 @@
           <div class="eyebrow"><span class="eyebrow-dot"></span> YOUR CARD. YOUR CANVAS.</div>
           <h1 id="hero-title">A little more<br /><em>you.</em></h1>
           <p>Discover art for your everyday carry. Pick a look, make it yours, keep your collection close.</p>
-          <div class="hero-actions"><a class="button button-primary" href="#explore">Explore designs <span>↗</span></a><button class="button button-quiet" id="openEditorTop">Create your own <span>＋</span></button></div>
+          <div class="hero-actions"><a class="button button-primary" href="#explore">Explore designs <span>↗</span></a><button class="button button-quiet" id="openEditorTop">Build your card <span>＋</span></button></div>
           <div class="hero-note"><span class="tiny-check">✓</span> Free to explore · No card details needed</div>
         </div>
         <div class="hero-visual">
@@ -69,6 +69,14 @@
     <footer id="about"><a class="brand footer-brand" href="#top"><span class="brand-mark">C</span><span>CARD<span class="brand-light">STUDIO</span></span></a><span>Made for self-expression.</span><span class="footer-disclaimer">Artwork preview only · Not a payment card</span></footer>
   </div>
 
+  <div class="modal-backdrop hidden" id="quizModal" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+    <div class="quiz-modal">
+      <div class="quiz-head"><button class="quiz-back" id="quizBack" aria-label="Go back">←</button><div class="quiz-brand">YOUR CARD <span id="quizProgress">1 / 3</span></div><button class="icon-button" id="closeQuiz" aria-label="Close quiz">×</button></div>
+      <div class="quiz-progress-track"><span id="quizProgressBar"></span></div>
+      <div id="quizStepContent"></div>
+    </div>
+  </div>
+
   <div class="modal-backdrop hidden" id="editorModal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
     <div class="editor-modal">
       <div class="modal-head"><div><div class="eyebrow">MAKE IT YOURS</div><h2 id="editorTitle">Your canvas.</h2></div><button class="icon-button" id="closeEditor" aria-label="Close editor">×</button></div>
@@ -89,6 +97,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="catalog.js?v=6"></script>
   <script src="persistence.js?v=6"></script>
-  <script src="app.js?v=6"></script>
+  <script src="quiz.js?v=1"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

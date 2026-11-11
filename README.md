@@ -4,6 +4,7 @@ An iPhone-first, installable web prototype for the CARD STUDIO concept.
 
 ## Included in this milestone
 - Responsive gallery with Anime, Luxury, Cyberpunk, Art, Cinema and Automotive categories.
+- Three-step card builder: design selection, name/photo styling, stickers and Gloss/Matte/Holo finish.
 - Beta gallery previews with remote Unsplash photography for Japanese, portrait, floral, neon-city, cinema and automotive moods.
 - Search across titles and tags.
 - Favorites / saved collection (stored locally).
@@ -30,6 +31,10 @@ IndexedDB record shape used for saved artwork.
 Gallery preview images are loaded from Unsplash under the Unsplash License.
 These remote previews require an internet connection; user-uploaded artwork
 remains local.
+
+The current beta is a local-first static PWA: there is no account or server
+backend yet. Apple Pay/Wallet is represented only as a disabled visual placeholder;
+the app never requests card numbers, CVV, bank credentials or payment tokens.
 
 Open `http://localhost:4173` in a browser.
 
