@@ -4,9 +4,10 @@ An iPhone-first, installable web prototype for the CARD STUDIO concept.
 
 ## Included in this milestone
 - Responsive gallery with Anime, Luxury, Cyberpunk, Art, Cinema and Automotive categories.
+- Beta gallery previews with remote Unsplash photography for Japanese, portrait, floral, neon-city, cinema and automotive moods.
 - Search across titles and tags.
 - Favorites / saved collection (stored locally).
-- Custom artwork upload (JPG, PNG, WEBP; max 12 MB).
+- Custom artwork upload (JPG, PNG, WEBP, HEIC/HEIF from iPhone; max 12 MB).
 - Local image preview controls: scale, brightness and vertical position.
 - Saved custom artwork persists on the device with IndexedDB.
 - Consistent decorative chip element across designs.
@@ -20,6 +21,15 @@ Requires Node.js 20+ and Python 3.
 npm test
 npm run serve
 ```
+
+The test suite covers catalog behavior, iPhone image type detection and the
+IndexedDB record shape used for saved artwork.
+
+## Beta gallery image credits
+
+Gallery preview images are loaded from Unsplash under the Unsplash License.
+These remote previews require an internet connection; user-uploaded artwork
+remains local.
 
 Open `http://localhost:4173` in a browser.
 

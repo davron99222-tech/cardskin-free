@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { filterDesigns, toggleFavorite, normalizeSearch } = require('../src/catalog.js');
+const { filterDesigns, toggleFavorite, normalizeSearch } = require('./catalog.js');
 
 const designs = [
   { id: 'anime-01', title: 'Neon Ronin', category: 'Anime', tags: ['neon', 'samurai'] },

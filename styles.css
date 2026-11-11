@@ -18,4 +18,4 @@ button, .filter-chip, .upload-zone { touch-action: manipulation; }
 }
 
 /* Uploaded artwork is a real image layer for reliable iPhone Safari rendering. */
-.custom-art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;transform-origin:center center}
+.custom-art-image,.preset-art-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;transform-origin:center center}.preset-art-image{opacity:.62;filter:saturate(.9) contrast(1.08)}.design-source{font:7px var(--mono);letter-spacing:.08em;color:#59606b;margin-top:4px}

@@ -20,6 +20,31 @@ function artworkName(filename) {
   return String(filename || '').trim().replace(/\.[^.]+$/, '').slice(0, 24) || 'Your artwork';
 }
 
+function clamp(value, minimum, maximum, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(maximum, Math.max(minimum, number)) : fallback;
+}
+
+function createArtworkRecord(artwork) {
+  if (!artwork || !artwork.blob) throw new Error('Artwork data is missing');
+  const source = artwork.blob;
+  const type = String(source.type || artwork.mimeType || 'application/octet-stream').toLowerCase();
+  // Store a plain Blob snapshot instead of a File object. This keeps the record
+  // structured-cloneable across iOS Safari reloads and IndexedDB transactions.
+  const blob = typeof Blob === 'undefined' || source.constructor.name === 'Blob'
+    ? source
+    : new Blob([source], { type });
+  return {
+    version: 1,
+    blob,
+    name: artworkName(artwork.name),
+    mimeType: type,
+    zoom: clamp(artwork.zoom, 80, 160, 100),
+    brightness: clamp(artwork.brightness, 60, 140, 100),
+    position: clamp(artwork.position, 0, 100, 50),
+  };
+}
+
 function openArtworkDatabase() {
   return new Promise((resolve, reject) => {
     if (typeof indexedDB === 'undefined') return reject(new Error('Local artwork storage is unavailable in this browser'));
@@ -35,9 +60,10 @@ function openArtworkDatabase() {
 async function saveArtwork(artwork) {
   const db = await openArtworkDatabase();
   try {
+    const record = createArtworkRecord(artwork);
     await new Promise((resolve, reject) => {
       const transaction = db.transaction('artwork', 'readwrite');
-      transaction.objectStore('artwork').put(artwork, 'active');
+      transaction.objectStore('artwork').put(record, 'active');
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error || new Error('Could not save artwork'));
       transaction.onabort = () => reject(transaction.error || new Error('Artwork save was cancelled'));
@@ -56,5 +82,5 @@ async function loadArtwork() {
   } finally { db.close(); }
 }
 
-if (typeof module !== 'undefined') module.exports = { validateArtworkFile, artworkName, artworkMimeType };
+if (typeof module !== 'undefined') module.exports = { validateArtworkFile, artworkName, artworkMimeType, createArtworkRecord };
 if (typeof window !== 'undefined') window.CardPersistence = { validateArtworkFile, artworkName, artworkMimeType, saveArtwork, loadArtwork };

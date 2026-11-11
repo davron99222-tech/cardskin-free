@@ -1,12 +1,12 @@
 'use strict';
 
 const designs = [
-  { id:'anime-01', title:'Neon Ronin', category:'Anime', tags:['neon','samurai','japan'], subtitle:'ANIME SERIES', art:'art-ronin', edition:'01 / 06' },
-  { id:'lux-01', title:'Obsidian', category:'Luxury', tags:['black','minimal','titanium'], subtitle:'PURE MATERIAL', art:'art-obsidian', edition:'02 / 06' },
-  { id:'art-01', title:'Sakura Bloom', category:'Art', tags:['pink','japan','floral'], subtitle:'BOTANICAL STUDY', art:'art-sakura', edition:'03 / 06' },
-  { id:'cyber-01', title:'Night Protocol', category:'Cyberpunk', tags:['neon','grid','future'], subtitle:'AFTER DARK', art:'art-cyber', edition:'04 / 06' },
-  { id:'cinema-01', title:'Noir Frame', category:'Cinema', tags:['film','monochrome','dark'], subtitle:'CINEMA ARCHIVE', art:'art-noir', edition:'05 / 06' },
-  { id:'auto-01', title:'Redline', category:'Automotive', tags:['racing','speed','motorsport'], subtitle:'MOTOR CLUB', art:'art-racing', edition:'06 / 06' },
+  { id:'anime-01', title:'Neon Ronin', category:'Anime', tags:['neon','samurai','japan'], subtitle:'ANIME SERIES', art:'art-ronin', edition:'01 / 06', image:'https://images.unsplash.com/photo-1553128992-241b0d2ff982?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
+  { id:'lux-01', title:'Obsidian', category:'Luxury', tags:['black','minimal','titanium'], subtitle:'PURE MATERIAL', art:'art-obsidian', edition:'02 / 06', image:'https://images.unsplash.com/photo-1741298856762-1ff2f1204bc8?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
+  { id:'art-01', title:'Sakura Bloom', category:'Art', tags:['pink','japan','floral'], subtitle:'BOTANICAL STUDY', art:'art-sakura', edition:'03 / 06', image:'https://images.unsplash.com/photo-1560147000-40ee5f2bd85c?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
+  { id:'cyber-01', title:'Night Protocol', category:'Cyberpunk', tags:['neon','grid','future'], subtitle:'AFTER DARK', art:'art-cyber', edition:'04 / 06', image:'https://images.unsplash.com/photo-1553128992-241b0d2ff982?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
+  { id:'cinema-01', title:'Noir Frame', category:'Cinema', tags:['film','monochrome','dark'], subtitle:'CINEMA ARCHIVE', art:'art-noir', edition:'05 / 06', image:'https://images.unsplash.com/photo-1686343916755-9b411972c06e?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
+  { id:'auto-01', title:'Redline', category:'Automotive', tags:['racing','speed','motorsport'], subtitle:'MOTOR CLUB', art:'art-racing', edition:'06 / 06', image:'https://images.unsplash.com/photo-1686440778198-731426f81e0d?auto=format&fit=crop&w=1200&q=80', imageSource:'Unsplash' },
 ];
 
 let storedFavorites = [];
@@ -22,7 +22,9 @@ function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => 
 function cardMarkup(design, role = 'gallery') {
   const title = escapeHtml(design.title).toUpperCase().replace(' ', '<br>');
   const titleId = role === 'editor' ? 'editorArtTitle' : role === 'hero' ? 'heroArtTitle' : '';
-  return `<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title" ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
+  const subtitleId = role === 'hero' ? 'heroArtCategory' : '';
+  const imageMarkup = design.image ? `<img class="preset-art-image" src="${escapeHtml(design.image)}" alt="" loading="lazy" decoding="async" />` : '';
+  return `${imageMarkup}<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title" ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span ${subtitleId ? `id="${subtitleId}"` : ''}>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
 }
 function setCardAppearance(element, design, role = 'gallery') {
   const roleClass = element === editorCard ? 'editor-card' : '';
@@ -52,7 +54,7 @@ function renderHero() {
 function renderGrid() {
   const visible = window.CardCatalog.filterDesigns(designs, { category:state.category, query:state.query });
   $('resultCount').textContent = `${String(visible.length).padStart(2,'0')} DESIGNS`;
-  grid.innerHTML = visible.map((design) => `<article class="design-card" data-id="${design.id}" tabindex="0" aria-label="Select ${escapeHtml(design.title)}"><div class="design-thumb"><div class="bank-card ${design.art}">${cardMarkup(design)}</div><button class="heart-button ${state.favorites.includes(design.id) ? 'saved' : ''}" data-favorite="${design.id}" aria-label="${state.favorites.includes(design.id) ? 'Remove from' : 'Add to'} favorites">${state.favorites.includes(design.id) ? '♥' : '♡'}</button></div><div class="design-meta"><div><div class="design-title">${escapeHtml(design.title)}</div><div class="design-subtitle">${escapeHtml(design.category.toUpperCase())} · ${escapeHtml(design.subtitle)}</div></div><span class="design-arrow">↗</span></div></article>`).join('');
+  grid.innerHTML = visible.map((design) => `<article class="design-card" data-id="${design.id}" tabindex="0" aria-label="Select ${escapeHtml(design.title)}"><div class="design-thumb"><div class="bank-card ${design.art}">${cardMarkup(design)}</div><button class="heart-button ${state.favorites.includes(design.id) ? 'saved' : ''}" data-favorite="${design.id}" aria-label="${state.favorites.includes(design.id) ? 'Remove from' : 'Add to'} favorites">${state.favorites.includes(design.id) ? '♥' : '♡'}</button></div><div class="design-meta"><div><div class="design-title">${escapeHtml(design.title)}</div><div class="design-subtitle">${escapeHtml(design.category.toUpperCase())} · ${escapeHtml(design.subtitle)}</div><div class="design-source">IMAGE · ${escapeHtml(design.imageSource || 'CARD STUDIO')}</div></div><span class="design-arrow">↗</span></div></article>`).join('');
   $('emptyState').classList.toggle('hidden', visible.length !== 0);
 }
 function renderFavorites() {

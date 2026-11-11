@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b0c0f" />
   <meta name="description" content="A free creative studio for custom digital card artwork." />
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css?v=6" />
   <title>Card Studio — Make it yours</title>
 </head>
 <body>
@@ -75,7 +75,7 @@
       <div class="editor-layout">
         <div class="editor-preview-wrap"><div class="bank-card editor-card art-ronin" id="editorCard"><div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">CUSTOM</span></div><div class="art-title" id="editorArtTitle">NEON<br />RONIN</div><div class="card-chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span>CUSTOM ARTWORK</span><span class="card-orbit">✳</span></div></div><p class="preview-hint">The chip stays consistent across every design.</p></div>
         <div class="editor-controls">
-          <label class="upload-zone" for="imageUpload"><span class="upload-symbol">＋</span><strong>Upload your image</strong><small>JPG, PNG or WEBP · stays on this device</small><input id="imageUpload" type="file" accept="image/*" /></label>
+          <label class="upload-zone" for="imageUpload"><span class="upload-symbol">＋</span><strong>Upload your image</strong><small>JPG, PNG, WEBP or iPhone HEIC · stays on this device</small><input id="imageUpload" type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif" /></label>
           <div class="control-group"><div class="control-label"><label for="zoomRange">Image scale</label><output id="zoomValue">100%</output></div><input id="zoomRange" type="range" min="80" max="160" value="100" /></div>
           <div class="control-group"><div class="control-label"><label for="brightnessRange">Brightness</label><output id="brightnessValue">100%</output></div><input id="brightnessRange" type="range" min="60" max="140" value="100" /></div>
           <div class="control-group"><div class="control-label"><label for="positionRange">Vertical position</label><output id="positionValue">50%</output></div><input id="positionRange" type="range" min="0" max="100" value="50" /></div>
@@ -87,8 +87,8 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="src/catalog.js"></script>
-  <script src="src/persistence.js"></script>
-  <script src="app.js"></script>
+  <script src="catalog.js?v=6"></script>
+  <script src="persistence.js?v=6"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
