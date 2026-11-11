@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "private": true,
   "description": "iPhone-first card artwork gallery and editor prototype",
-  "scripts": { "test": "node --test catalog.test.js persistence.test.js quiz.test.js wallet.test.js", "serve": "python3 -m http.server 4173" }
+  "scripts": { "test": "node --test catalog.test.js persistence.test.js quiz.test.js wallet.test.js server/wallet-pass-contract.test.js", "serve": "python3 -m http.server 4173" }
 }
