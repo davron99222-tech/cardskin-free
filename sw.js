@@ -1,4 +1,4 @@
-const CACHE_NAME = 'card-studio-v2';
+const CACHE_NAME = 'card-studio-v3';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './src/catalog.js', './src/persistence.js', './manifest.webmanifest', './icons/apple-touch-icon.png'];
 self.addEventListener('install', (event) => event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))));
 self.addEventListener('activate', (event) => event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))));

@@ -25,13 +25,20 @@ function cardMarkup(design, role = 'gallery') {
   return `<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title" ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
 }
 function setCardAppearance(element, design, role = 'gallery') {
-  element.className = `bank-card ${design.art || ''}`;
+  const roleClass = element === editorCard ? 'editor-card' : '';
+  element.className = `bank-card ${design.art || ''} ${roleClass}`.trim();
   element.innerHTML = cardMarkup(design, role);
   if (state.customImage && (element === editorCard || element === heroCard)) {
-    element.style.setProperty('--art-bg', `linear-gradient(#0002,#0002), url("${state.customImage}") center ${state.position}% / ${state.zoom}% auto no-repeat`);
-    element.style.filter = `brightness(${state.brightness}%)`;
+    const artwork = document.createElement('img');
+    artwork.className = 'custom-art-image';
+    artwork.alt = state.customName || 'Uploaded artwork';
+    artwork.src = state.customImage;
+    artwork.style.objectPosition = `center ${state.position}%`;
+    artwork.style.transform = `scale(${state.zoom / 100})`;
+    artwork.style.filter = `brightness(${state.brightness}%)`;
+    element.prepend(artwork);
+    element.style.filter = '';
   } else {
-    element.style.removeProperty('--art-bg');
     element.style.filter = '';
   }
 }
@@ -128,9 +135,23 @@ $('imageUpload').addEventListener('change', (event) => {
   const file = event.target.files && event.target.files[0]; if (!file) return;
   const validationError = window.CardPersistence.validateArtworkFile(file);
   if (validationError) { showToast(validationError); event.target.value = ''; return; }
-  if (state.customImage) URL.revokeObjectURL(state.customImage);
-  state.customBlob = file; state.customImage = URL.createObjectURL(file); state.customName = window.CardPersistence.artworkName(file.name);
-  updateEditor(); $('editorArtTitle').textContent = state.customName.toUpperCase(); showToast('Image loaded on this device');
+  const nextUrl = URL.createObjectURL(file);
+  const probe = new Image();
+  probe.onload = () => {
+    if (state.customImage) URL.revokeObjectURL(state.customImage);
+    state.customBlob = file;
+    state.customImage = nextUrl;
+    state.customName = window.CardPersistence.artworkName(file.name);
+    updateEditor();
+    $('editorArtTitle').textContent = state.customName.toUpperCase();
+    showToast('Image loaded on this device');
+  };
+  probe.onerror = () => {
+    URL.revokeObjectURL(nextUrl);
+    showToast('This photo format could not be opened. Try sharing it as JPEG.');
+    event.target.value = '';
+  };
+  probe.src = nextUrl;
 });
 ['zoomRange','brightnessRange','positionRange'].forEach((id) => $(id).addEventListener('input', updateEditor));
 $('resetEditor').addEventListener('click', () => {
