@@ -11,7 +11,7 @@ const designs = [
 
 let storedFavorites = [];
 try { storedFavorites = JSON.parse(localStorage.getItem('card-studio-favorites') || '[]'); } catch (_) {}
-const state = { category:'All', query:'', selectedId:'anime-01', favorites:Array.isArray(storedFavorites) ? storedFavorites : [], customImage:null, customBlob:null, customName:'Your artwork', zoom:100, brightness:100, position:50, quizStickers:[], quizFinish:'gloss' };
+const state = { category:'All', query:'', selectedId:'anime-01', favorites:Array.isArray(storedFavorites) ? storedFavorites : [], customImage:null, customBlob:null, customName:'Your artwork', zoom:100, brightness:100, position:50, quizFont:'bold', quizColor:'#ffffff', quizStickers:[], quizFinish:'gloss' };
 const $ = (id) => document.getElementById(id);
 const grid = $('designGrid');
 const heroCard = $('heroCard');
@@ -20,12 +20,17 @@ const walletCard = $('walletCard');
 
 function getSelected() { return designs.find((item) => item.id === state.selectedId) || designs[0]; }
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
-function cardMarkup(design, role = 'gallery') {
+function cardMarkup(design, role = 'gallery', titleOptions = {}) {
   const title = escapeHtml(design.title).toUpperCase().replace(' ', '<br>');
   const titleId = role === 'editor' ? 'editorArtTitle' : role === 'hero' ? 'heroArtTitle' : '';
   const subtitleId = role === 'hero' ? 'heroArtCategory' : '';
   const imageMarkup = design.image ? `<img class="preset-art-image" src="${escapeHtml(design.image)}" alt="" loading="lazy" decoding="async" />` : '';
-  return `${imageMarkup}<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title" ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span ${subtitleId ? `id="${subtitleId}"` : ''}>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
+  const styledRole = ['editor', 'hero', 'wallet', 'quiz'].includes(role);
+  const titleFont = styledRole ? titleOptions.font || state.quizFont : '';
+  const titleColor = styledRole ? titleOptions.color || state.quizColor : '';
+  const titleStyle = styledRole ? ` style="--title-color:${escapeHtml(titleColor)}"` : '';
+  const titleClass = styledRole ? ` card-title-${escapeHtml(titleFont)}` : '';
+  return `${imageMarkup}<div class="card-grain"></div><div class="card-topline"><span class="card-brand">CARD STUDIO</span><span class="card-edition">${role === 'editor' ? 'CUSTOM' : design.edition}</span></div><div class="art-title${titleClass}"${titleStyle} ${titleId ? `id="${titleId}"` : ''}>${title}</div><div class="card-chip" aria-label="Decorative chip"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="card-bottom"><span ${subtitleId ? `id="${subtitleId}"` : ''}>${escapeHtml(role === 'editor' ? 'CUSTOM ARTWORK' : design.subtitle || 'CUSTOM ARTWORK')}</span><span class="card-orbit">✳</span></div>`;
 }
 function setCardAppearance(element, design, role = 'gallery') {
   const roleClass = element === editorCard ? 'editor-card' : element === walletCard ? 'wallet-card' : '';
@@ -131,7 +136,7 @@ function quizPreviewMarkup(design) {
   const previewDesign = state.customImage ? { ...design, title:state.customName, subtitle:'CUSTOM ARTWORK', edition:'CUSTOM', art:'', image:null } : design;
   const image = state.customImage ? `<img class="custom-art-image" src="${escapeHtml(state.customImage)}" alt="${escapeHtml(state.customName)}" style="object-position:center ${state.position}%;transform:scale(${state.zoom / 100});filter:brightness(${state.brightness}%);" />` : '';
   const stickers = (quizState?.stickers || []).map((sticker, index) => `<span class="quiz-sticker sticker-${index + 1}">${sticker}</span>`).join('');
-  return `<div class="quiz-preview bank-card ${previewDesign.art || ''}">${image}${cardMarkup(previewDesign)}<div class="quiz-stickers">${stickers}</div></div>`;
+  return `<div class="quiz-preview bank-card ${previewDesign.art || ''}">${image}${cardMarkup(previewDesign, 'quiz', { font:quizState?.font, color:quizState?.color })}<div class="quiz-stickers">${stickers}</div></div>`;
 }
 function renderQuiz() {
   if (!quizState) return;
@@ -142,7 +147,7 @@ function renderQuiz() {
   if (quizState.step === 1) {
     $('quizStepContent').innerHTML = `<div class="quiz-copy"><div class="eyebrow">STEP 01</div><h2 id="quizTitle">Pick your <em>design.</em></h2><p>Choose a starting point. You can still make it yours in the next step.</p></div>${preview}<div class="quiz-design-options" role="radiogroup" aria-label="Pick a design">${designs.map((item) => `<button class="quiz-design-option ${item.id === quizState.selectedId ? 'selected' : ''}" data-quiz-action="design" data-id="${item.id}" aria-pressed="${item.id === quizState.selectedId}"><span class="quiz-option-swatch ${item.art}"></span><span>${escapeHtml(item.title)}</span></button>`).join('')}</div><button class="button button-primary quiz-next" data-quiz-action="next">Continue <span>→</span></button>`;
   } else if (quizState.step === 2) {
-    $('quizStepContent').innerHTML = `<div class="quiz-copy"><div class="eyebrow">STEP 02</div><h2 id="quizTitle">Make it <em>yours.</em></h2><p>Add a name, photo, or both.</p></div>${preview}<label class="quiz-name-label" for="quizName">Your name<input id="quizName" type="text" maxlength="24" value="${escapeHtml(quizState.name)}" placeholder="Add your name" /></label><label class="upload-zone quiz-upload" for="quizImageUpload"><span class="upload-symbol">＋</span><strong>${state.customImage ? 'Change photo' : 'Add photo'}</strong><small>JPG, PNG, WEBP or iPhone HEIC · local only</small><input id="quizImageUpload" type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif" /></label><div class="quiz-choice-group"><span class="quiz-choice-label">Font</span><div class="quiz-choice-row">${[['bold','Bold'],['classic','Classic'],['script','Script'],['mono','Mono']].map(([value,label]) => `<button class="quiz-choice ${quizState.font === value ? 'selected' : ''}" data-quiz-action="font" data-value="${value}">${label}</button>`).join('')}</div></div><div class="quiz-choice-group"><span class="quiz-choice-label">Color</span><div class="quiz-choice-row">${window.CardQuiz.QUIZ_COLORS.map((value) => `<button class="quiz-color ${quizState.color === value ? 'selected' : ''}" style="--quiz-color:${value}" data-quiz-action="color" data-value="${value}" aria-label="${value}"></button>`).join('')}</div></div><button class="button button-primary quiz-next" data-quiz-action="next">Continue <span>→</span></button>`;
+    $('quizStepContent').innerHTML = `<div class="quiz-copy"><div class="eyebrow">STEP 02</div><h2 id="quizTitle">Make it <em>yours.</em></h2><p>Add your name, a photo, or both.</p></div>${preview}<label class="quiz-photo-button" for="quizImageUpload"><span class="quiz-photo-icon">▣</span><strong>${state.customImage ? 'Change photo' : 'Add photo'}</strong><input id="quizImageUpload" type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif" /></label><label class="quiz-name-label" for="quizName"><input id="quizName" type="text" maxlength="24" value="${escapeHtml(quizState.name)}" placeholder="Add your name" /></label><div class="quiz-choice-group"><span class="quiz-choice-label">Font</span><div class="quiz-choice-row" role="radiogroup" aria-label="Font">${[['bold','Bold'],['classic','Classic'],['script','Script'],['mono','Mono']].map(([value,label]) => `<button class="quiz-choice card-title-${value} ${quizState.font === value ? 'selected' : ''}" data-quiz-action="font" data-value="${value}" role="radio" aria-checked="${quizState.font === value}">${label}</button>`).join('')}</div></div><div class="quiz-choice-group"><span class="quiz-choice-label">Color</span><div class="quiz-choice-row" role="radiogroup" aria-label="Color">${window.CardQuiz.QUIZ_COLORS.map((value) => `<button class="quiz-color ${quizState.color === value ? 'selected' : ''}" style="--quiz-color:${value}" data-quiz-action="color" data-value="${value}" role="radio" aria-checked="${quizState.color === value}" aria-label="${value}"></button>`).join('')}</div></div><button class="button button-primary quiz-next" data-quiz-action="next">Continue <span>→</span></button>`;
     $('quizName').addEventListener('input', (event) => { quizState = window.CardQuiz.setQuizName(quizState, event.target.value); });
   } else {
     $('quizStepContent').innerHTML = `<div class="quiz-copy"><div class="eyebrow">STEP 03</div><h2 id="quizTitle">The final <em>touch.</em></h2><p>Choose up to three stickers and a finish for your preview.</p></div>${preview}<div class="quiz-choice-group"><span class="quiz-choice-label">Add a sticker</span><div class="quiz-sticker-grid">${quizStickers.map((sticker) => `<button class="quiz-sticker-button ${quizState.stickers.includes(sticker) ? 'selected' : ''}" data-quiz-action="sticker" data-value="${sticker}" aria-label="${sticker} sticker">${sticker}</button>`).join('')}</div></div><div class="quiz-choice-group"><span class="quiz-choice-label">Finish</span><div class="quiz-finish-row">${[['gloss','Gloss','Shiny highlight'],['matte','Matte','Soft, no shine'],['holo','Holo','Rainbow sheen']].map(([value,label,caption]) => `<button class="quiz-finish ${quizState.finish === value ? 'selected' : ''}" data-quiz-action="finish" data-value="${value}"><strong>${label}</strong><small>${caption}</small></button>`).join('')}</div></div><button class="button button-primary quiz-next" data-quiz-action="open-editor">Open editor <span>↗</span></button>`;
@@ -215,7 +220,7 @@ $('quizStepContent').addEventListener('click', (event) => {
   if (type === 'font' || type === 'color' || type === 'finish') quizState = window.CardQuiz.setQuizOption(quizState, type, action.dataset.value);
   if (type === 'sticker') quizState = window.CardQuiz.toggleQuizSticker(quizState, action.dataset.value);
   if (type === 'next') quizState = window.CardQuiz.setQuizStep(quizState, quizState.step + 1);
-  if (type === 'open-editor') { state.selectedId = quizState.selectedId; state.quizStickers = [...quizState.stickers]; state.quizFinish = quizState.finish; if (quizState.name) state.customName = quizState.name; renderHero(); closeQuiz(); openEditor(); }
+  if (type === 'open-editor') { state.selectedId = quizState.selectedId; state.quizFont = quizState.font; state.quizColor = quizState.color; state.quizStickers = [...quizState.stickers]; state.quizFinish = quizState.finish; if (quizState.name) state.customName = quizState.name; renderHero(); closeQuiz(); openEditor(); }
   renderQuiz();
 });
 $('quizStepContent').addEventListener('change', (event) => { if (event.target.id === 'quizImageUpload') handleArtworkFile(event.target.files && event.target.files[0], event.target); });
@@ -223,7 +228,7 @@ $('quizStepContent').addEventListener('change', (event) => { if (event.target.id
 $('resetEditor').addEventListener('click', () => {
   $('zoomRange').value=100; $('brightnessRange').value=100; $('positionRange').value=50;
   if (state.customImage) URL.revokeObjectURL(state.customImage); state.customImage=null; state.customBlob=null; state.zoom=100; state.brightness=100; state.position=50; updateEditor();
-  const design=getSelected(); setCardAppearance(editorCard,design); $('editorArtTitle').innerHTML=escapeHtml(design.title).toUpperCase().replace(' ','<br>'); showToast('Editor reset');
+  const design=getSelected(); state.quizFont='bold'; state.quizColor='#ffffff'; state.quizStickers=[]; state.quizFinish='gloss'; setCardAppearance(editorCard,design); $('editorArtTitle').innerHTML=escapeHtml(design.title).toUpperCase().replace(' ','<br>'); showToast('Editor reset');
 });
 $('exportPng').addEventListener('click', exportCardPng);
 $('saveCustom').addEventListener('click', async () => {
@@ -254,3 +259,4 @@ async function initializeApp() {
 }
 initializeApp();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+
